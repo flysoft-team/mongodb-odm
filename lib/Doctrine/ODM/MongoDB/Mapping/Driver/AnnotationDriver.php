@@ -100,6 +100,8 @@ class AnnotationDriver extends AbstractAnnotationDriver
                 $class->setDiscriminatorValue($annot->value);
             } elseif ($annot instanceof ODM\ChangeTrackingPolicy) {
                 $class->setChangeTrackingPolicy(constant('Doctrine\\ODM\\MongoDB\\Mapping\\ClassMetadata::CHANGETRACKING_'.$annot->value));
+            } elseif ($annot instanceof ODM\ShardKey) {
+                $this->setShardKey($class, $annot);
             }
 
         }
@@ -115,6 +117,9 @@ class AnnotationDriver extends AbstractAnnotationDriver
         if ($documentAnnot instanceof ODM\MappedSuperclass) {
             $class->isMappedSuperclass = true;
         } elseif ($documentAnnot instanceof ODM\EmbeddedDocument) {
+            if ($class->isSharded()) {
+                throw MappingException::embeddedDocumentCantHaveShardKey($class->getName());
+            }
             $class->isEmbeddedDocument = true;
         }
         if (isset($documentAnnot->db)) {
@@ -236,6 +241,20 @@ class AnnotationDriver extends AbstractAnnotationDriver
         }
         $options = array_merge($options, $index->options);
         $class->addIndex($keys, $options);
+    }
+
+    private function setShardKey(ClassMetadataInfo $class, $shardKey)
+    {
+        $fields = $shardKey->fields;
+        $options = array();
+        $allowed = array('unique', 'numInitialChunks');
+        foreach ($allowed as $name) {
+            if (isset($shardKey->$name)) {
+                $options[$name] = $shardKey->$name;
+            }
+        }
+
+        $class->setShardKey($fields, $options);
     }
 
     /**
