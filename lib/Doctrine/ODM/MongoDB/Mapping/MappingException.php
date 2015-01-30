@@ -44,6 +44,11 @@ class MappingException extends BaseMappingException
         return new self("No mapping found for field '$fieldName' in class '$className'.");
     }
 
+    public static function mappingNotFoundByDbName($className, $dbFieldName)
+    {
+        return new self("No mapping found for field by DB name '$dbFieldName' in class '$className'.");
+    }
+
     public static function duplicateFieldMapping($document, $fieldName)
     {
         return new self('Property "' . $fieldName . '" in "' . $document . '" was already declared, but it must be declared only once');
