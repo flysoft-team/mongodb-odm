@@ -6,10 +6,13 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver;
 use Doctrine\MongoDB\Connection;
+use Doctrine\ODM\MongoDB\UnitOfWork;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var DocumentManager */
     protected $dm;
+    /** @var UnitOfWork */
     protected $uow;
 
     public function setUp()
