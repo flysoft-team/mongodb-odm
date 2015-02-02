@@ -26,6 +26,9 @@ class EagerCursorTest extends \Doctrine\ODM\MongoDB\Tests\BaseTest
         $this->test = $qb->getQuery()->execute();
     }
 
+    /**
+     * @group replication_lag
+     */
     public function testEagerCursorInheritsHydrateOptionAndHints()
     {
         $qb = $this->dm->createQueryBuilder('Doctrine\ODM\MongoDB\Tests\Functional\EagerTestDocument')
