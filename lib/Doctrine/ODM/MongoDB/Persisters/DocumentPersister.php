@@ -309,7 +309,7 @@ class DocumentPersister
             unset($data['$set']);
         }
 
-        /* If there are no modifiers remaining, we're upserting a document with 
+        /* If there are no modifiers remaining, we're upserting a document with
          * an identifier as its only field. Since a document with the identifier
          * may already exist, the desired behavior is "insert if not exists" and
          * NOOP otherwise. MongoDB 2.6+ does not allow empty modifiers, so $set
@@ -651,6 +651,7 @@ class DocumentPersister
         $hints = $collection->getHints();
         $mapping = $collection->getMapping();
         $groupedIds = array();
+        $idsKeys = array();
 
         $sorted = isset($mapping['sort']) && $mapping['sort'];
 
@@ -679,6 +680,7 @@ class DocumentPersister
             // only query for the referenced object if it is not already initialized or the collection is sorted
             if (($reference instanceof Proxy && ! $reference->__isInitialized__) || $sorted) {
                 $groupedIds[$className][] = $mongoId;
+                $idsKeys[$className][] = $key;
             }
         }
         foreach ($groupedIds as $className => $ids) {
@@ -708,13 +710,31 @@ class DocumentPersister
             }
             $documents = $cursor->toArray(false);
             foreach ($documents as $documentData) {
-                $document = $this->uow->getById($documentData['_id'], $class);
+                $docId = $documentData['_id'];
+                $document = $this->uow->getById($docId, $class);
+
+                /* Let's replace the document according to the discriminator if needed.
+                 * Thus we will be able to use discriminator with simple reference.
+                 */
+                if ($mapping['simple']) {
+                    $resolvedClassName = $this->uow->getClassNameForAssociation($mapping, $documentData);
+                    if ($resolvedClassName !== $className) {
+                        $resolvedDocument = $this->dm->getReference($resolvedClassName, $docId);
+                        if ($mapping['strategy'] === 'set') {
+                            $collection->set($idsKeys[$docId], $resolvedDocument);
+                        } else {
+                            $index = $collection->unwrap()->indexOf($document);
+                            $collection->set($index, $resolvedDocument);
+                        }
+                        $document = $resolvedDocument;
+                    }
+                } elseif ($sorted) {
+                    $collection->add($document);
+                }
+
                 $data = $this->hydratorFactory->hydrate($document, $documentData);
                 $this->uow->setOriginalDocumentData($document, $data);
                 $document->__isInitialized__ = true;
-                if ($sorted) {
-                    $collection->add($document);
-                }
             }
         }
     }

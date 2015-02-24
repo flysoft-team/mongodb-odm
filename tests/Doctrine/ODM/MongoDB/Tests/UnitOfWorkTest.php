@@ -5,12 +5,11 @@ namespace Doctrine\ODM\MongoDB\Tests;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Proxy\ProxyFactory;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\ODM\MongoDB\Persisters\PersistenceBuilder;
-use Doctrine\ODM\MongoDB\Tests\Mocks\ConnectionMock;
-use Doctrine\ODM\MongoDB\Tests\Mocks\UnitOfWorkMock;
 use Doctrine\ODM\MongoDB\Tests\Mocks\DocumentPersisterMock;
 use Documents\ForumUser;
 use Documents\ForumAvatar;
@@ -661,4 +660,11 @@ class EmbeddedDocumentWithIdStrategyNone
 {
     /** @ODM\Id(strategy="none") */
     public $id;
+}
+
+/** @ODM\Document */
+class ReplaceProxyTestDocument
+{
+    /** @ODM\Id(strategy="none") */
+    public $id = 1;
 }
