@@ -5,7 +5,6 @@ namespace Doctrine\ODM\MongoDB\Tests;
 use Doctrine\Common\PropertyChangedListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Proxy\ProxyFactory;
 use Doctrine\ODM\MongoDB\UnitOfWork;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
@@ -660,11 +659,4 @@ class EmbeddedDocumentWithIdStrategyNone
 {
     /** @ODM\Id(strategy="none") */
     public $id;
-}
-
-/** @ODM\Document */
-class ReplaceProxyTestDocument
-{
-    /** @ODM\Id(strategy="none") */
-    public $id = 1;
 }
