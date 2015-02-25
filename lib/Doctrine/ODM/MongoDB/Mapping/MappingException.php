@@ -44,6 +44,11 @@ class MappingException extends BaseMappingException
         return new self("No mapping found for field '$fieldName' in class '$className'.");
     }
 
+    public static function mappingNotFoundByDbName($className, $dbFieldName)
+    {
+        return new self("No mapping found for field by DB name '$dbFieldName' in class '$className'.");
+    }
+
     public static function duplicateFieldMapping($document, $fieldName)
     {
         return new self('Property "' . $fieldName . '" in "' . $document . '" was already declared, but it must be declared only once');
@@ -160,5 +165,25 @@ class MappingException extends BaseMappingException
     public static function simpleReferenceRequiresTargetDocument($className, $fieldName)
     {
         return new self("Target document must be specified for simple reference: $className::$fieldName");
+    }
+
+    /**
+     * @param $subclassName
+     *
+     * @return MappingException
+     */
+    public static function shardKeyInSingleCollInheritanceSubclass($subclassName)
+    {
+        return new self("Shard key overriding in subclass is forbidden for single collection inheritance: $subclassName");
+    }
+
+    /**
+     * @param $className
+     *
+     * @return MappingException
+     */
+    public static function embeddedDocumentCantHaveShardKey($className)
+    {
+        return new self("Embedded document can't have shard key: $className");
     }
 }

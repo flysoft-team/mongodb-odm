@@ -41,6 +41,7 @@
       <xs:element name="discriminator-map" type="odm:discriminator-map" minOccurs="0"/>
       <xs:element name="lifecycle-callbacks" type="odm:lifecycle-callbacks" minOccurs="0"/>
       <xs:element name="indexes" type="odm:indexes" minOccurs="0"/>
+      <xs:element name="shard-key" type="odm:shard-key" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="db" type="xs:NMTOKEN" />
     <xs:attribute name="name" type="xs:string" />
@@ -55,7 +56,7 @@
   <xs:complexType name="field">
     <xs:sequence>
       <xs:element name="id-generator-option" type="odm:id-generator-option" minOccurs="0" maxOccurs="unbounded" />
-    </xs:sequence>  
+    </xs:sequence>
     <xs:attribute name="id" type="xs:boolean" default="false" />
     <xs:attribute name="name" type="xs:NMTOKEN" />
     <xs:attribute name="type" type="xs:NMTOKEN" default="string" />
@@ -77,7 +78,7 @@
     <xs:attribute name="sparse" type="xs:boolean" />
     <xs:attribute name="unique" type="xs:boolean" />
   </xs:complexType>
-  
+
   <xs:complexType name="id-generator-option">
     <xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
     <xs:attribute name="value" type="xs:string" use="required"/>
@@ -256,5 +257,23 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="shard-key">
+    <xs:sequence>
+      <xs:element name="key" type="odm:shard-key-key" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="option" type="odm:shard-key-option" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="unique" type="xs:boolean"/>
+    <xs:attribute name="numInitialChunks" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="shard-key-key">
+    <xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+    <xs:attribute name="order" type="xs:NMTOKEN" default="asc" />
+  </xs:complexType>
+
+  <xs:complexType name="shard-key-option">
+    <xs:attribute name="name" type="xs:NMTOKEN" use="required"/>
+    <xs:attribute name="value" type="xs:NMTOKEN" use="required" />
+  </xs:complexType>
 
 </xs:schema>

@@ -74,4 +74,30 @@ class MongoDBException extends \Exception
             implode(', ', $unindexedFields)
         ));
     }
+
+    public static function shardKeyFieldCannotBeChanged($field, $className)
+    {
+        return new self(sprintf('Shard key field "%s" cannot be changed. Class: %s', $field, $className));
+    }
+
+    public static function shardKeyFieldMissing($field, $className)
+    {
+        return new self(sprintf('Shard key field "%s" is missing. Class: %s.', $field, $className));
+    }
+
+    public static function failedToEnableSharding($dbName, $errorMessage)
+    {
+        return new self(sprintf('Failed to enable sharding for database "%s". Error from MongoDB: %s',
+            $dbName,
+            $errorMessage
+        ));
+    }
+
+    public static function failedToEnsureDocumentSharding($className, $errorMessage)
+    {
+        return new self(sprintf('Failed to ensure sharding for document "%s". Error from MongoDB: %s',
+            $className,
+            $errorMessage
+        ));
+    }
 }
